@@ -1,0 +1,70 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+/* Smooth hover animation */
+.book-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+    position: relative;
+}
+
+    .book-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+/* Action buttons (hidden until hover) */
+.book-actions {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: flex;
+    gap: 5px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.book-card:hover .book-actions {
+    opacity: 1;
+}
+/* Icon buttons */
+.action-btn {
+    background: rgba(255, 255, 255, 0.85);
+    border: none;
+    border-radius: 50%;
+    padding: 6px;
+    font-size: 0.9rem;
+    color: #333;
+    transition: background 0.2s ease;
+}
+
+    .action-btn:hover {
+        background: rgba(255, 255, 255, 1);
+    }
+/* Add New Card style */
+.add-card {
+    border: 2px dashed #ccc;
+    transition: background 0.2s ease;
+}
+
+    .add-card:hover {
+        background: rgba(0, 123, 255, 0.05);
+    }

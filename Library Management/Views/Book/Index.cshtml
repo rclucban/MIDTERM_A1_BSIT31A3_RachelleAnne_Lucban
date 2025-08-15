@@ -1,0 +1,52 @@
+﻿@model IEnumerable<Library_Management.Models.BookListViewModel>
+
+@{
+    ViewData["Title"] = "Books";
+}
+
+<h1 class="mb-4 fw-bold">Book Library</h1>
+
+<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-4">
+    <!-- Add New Book Slot -->
+    <div class="col">
+        <a asp-action="Create" class="card h-100 shadow-sm border-0 d-flex align-items-center justify-content-center text-decoration-none add-card">
+            <div class="text-center">
+                <i class="bi bi-plus-circle" style="font-size: 3rem; color: #6c757d;"></i>
+                <p class="mt-2 text-muted">Add Book</p>
+            </div>
+        </a>
+    </div>
+    @foreach (var book in Model)
+    {
+        <div class="col">
+            <div class="card book-card h-100 shadow-sm border-0" onclick="window.location.href='@Url.Action("Details", new { id = book.BookId })'">
+
+                <!-- Action Icons -->
+                <div class="book-actions">
+                    <a asp-action="Edit" asp-route-id="@book.BookId" class="action-btn" title="Edit">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+                    <a asp-action="Delete" asp-route-id="@book.BookId" class="action-btn" title="Delete">
+                        <i class="bi bi-trash"></i>
+                    </a>
+                </div>
+
+                <!-- Book Cover -->
+                <img src="@book.CoverImageUrl" class="card-img-top" alt="@book.Title" style="text-align:center; text-anchor: middle; height: 200px; object-fit: cover; background-color: silver;">
+
+                <!-- Book Details -->
+                <div class="card-body">
+                    <h6 class="card-title text-truncate" title="@book.Title">@book.Title</h6>
+                    <p class="text-muted mb-1 text-truncate">
+                        <strong>Author:</strong> @book.AuthorName
+                    </p>
+                    <p class="mb-0 small text-secondary">
+                        @book.Genre | Copies: @book.AvailableCopies / @book.TotalCopies
+                    </p>
+                </div>
+            </div>
+        </div>
+    }
+
+  
+</div>
