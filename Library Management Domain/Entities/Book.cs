@@ -18,7 +18,7 @@ namespace Library_Management_Domain.Entities
 
     }
 
-    public class BookItem
+    public class BookCopy
     {
         public Guid Id { get; set; }
         public string? CoverImageUrl { get; set; } = default!;

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Library_Management.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Library_Management.Controllers
 {
@@ -14,5 +15,38 @@ namespace Library_Management.Controllers
         {
             return View();
         }
+
+     
+        public IActionResult EditModal(Guid id)
+        {
+            var editBookViewModel = BookService.Instance.GetBookById(id);
+            if (editBookViewModel == null) return NotFound();
+
+          
+            return PartialView("_EditBookPartial", editBookViewModel);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(EditBookViewModel vm)
+        {
+            if (!ModelState.IsValid)
+            {
+                // If model state is not valid, you can return a view with validation errors
+                return BadRequest(ModelState);
+            }
+
+            // Assuming BookService has a method to update the book
+            BookService.Instance.UpdateBook(vm);
+
+            return Ok();
+        }
+
+        public IActionResult Details(Guid id)
+        {
+            var book = BookService.Instance.GetBooks().First(b => b.BookId == id);
+            return View(book);
+        }
+
+
     }
 }

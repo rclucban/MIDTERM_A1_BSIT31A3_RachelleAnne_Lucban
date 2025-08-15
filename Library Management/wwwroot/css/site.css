@@ -20,51 +20,56 @@ html {
 body {
   margin-bottom: 60px;
 }
-/* Smooth hover animation */
 .book-card {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    cursor: pointer;
     position: relative;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
     .book-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        box-shadow: 0 6px 15px rgba(0,0,0,0.15);
     }
-/* Action buttons (hidden until hover) */
+
 .book-actions {
     position: absolute;
     top: 8px;
     right: 8px;
     display: flex;
-    gap: 5px;
+    gap: 6px;
     opacity: 0;
+    pointer-events: none;
     transition: opacity 0.2s ease;
 }
 
 .book-card:hover .book-actions {
     opacity: 1;
+    pointer-events: auto;
 }
-/* Icon buttons */
+
 .action-btn {
-    background: rgba(255, 255, 255, 0.85);
-    border: none;
+    background-color: rgba(255, 255, 255, 0.9);
     border-radius: 50%;
-    padding: 6px;
-    font-size: 0.9rem;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     color: #333;
-    transition: background 0.2s ease;
+    text-decoration: none;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
     .action-btn:hover {
-        background: rgba(255, 255, 255, 1);
+        background-color: #f0f0f0;
+        transform: scale(1.1);
     }
-/* Add New Card style */
-.add-card {
-    border: 2px dashed #ccc;
-    transition: background 0.2s ease;
+
+.edit-btn {
+    color: #0d6efd;
 }
 
-    .add-card:hover {
-        background: rgba(0, 123, 255, 0.05);
-    }
+.delete-btn {
+    color: #dc3545;
+}

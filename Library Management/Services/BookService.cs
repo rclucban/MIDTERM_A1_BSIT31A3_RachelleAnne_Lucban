@@ -5,7 +5,7 @@ public class BookService
 {
     private readonly ICollection<Book> _books = new List<Book>();
     private readonly ICollection<Author> _authors = new List<Author>();
-    private readonly ICollection<BookItem> _bookItems = new List<BookItem>();
+    private readonly ICollection<BookCopy> _bookCopies = new List<BookCopy>();
 
     private BookService()
     {
@@ -35,7 +35,7 @@ public class BookService
             PublishedDate = new DateTime(1949, 6, 8)
         };
 
-        var bookItem1 = new BookItem
+        var bookItem1 = new BookCopy
         {
             Id = Guid.NewGuid(),
             CoverImageUrl = "https://bookcoverarchive.com/wp-content/uploads/amazon/1984.jpg",
@@ -68,7 +68,7 @@ public class BookService
             PublishedDate = new DateTime(1997, 6, 26)
         };
 
-        var bookItem2 = new BookItem
+        var bookItem2 = new BookCopy
         {
             Id = Guid.NewGuid(),
             CoverImageUrl = "https://contentful.harrypotter.com/usf1vwtuqyxm/2DCs73x6P8seNobQ9zBSbO/1a5dfd6ed5fc0ed9545370470fc3d74c/English_Harry_Potter_1_Epub_9781781100219.jpg",
@@ -195,15 +195,15 @@ public class BookService
         _authors.Add(author2);
         _books.Add(book1);
         _books.Add(book2);
-        _bookItems.Add(bookItem1);
-        _bookItems.Add(bookItem2);
+        _bookCopies.Add(bookItem1);
+        _bookCopies.Add(bookItem2);
 
         foreach (var entry in extraBooks)
         {
             entry.Author.Books.Add(entry.Book);
             _authors.Add(entry.Author);
             _books.Add(entry.Book);
-            _bookItems.Add(new BookItem
+            _bookCopies.Add(new BookCopy
             {
                 Id = Guid.NewGuid(),
                 CoverImageUrl = entry.Cover,
@@ -238,7 +238,7 @@ public class BookService
         };
         _authors.Add(newAuthor);
 
-        var newBookItem = new BookItem
+        var newBookItem = new BookCopy
         {
             Id = Guid.NewGuid(),
             CoverImageUrl = book.CoverImageUrl,
@@ -247,7 +247,7 @@ public class BookService
             AddedDate = DateTime.Now,
             Book = newBook
         };
-        _bookItems.Add(newBookItem);
+        _bookCopies.Add(newBookItem);
     }
 
     public IEnumerable<BookListViewModel> GetBooks()
@@ -260,12 +260,60 @@ public class BookService
             Description = b.Description,
             Genre = b.Genre,
             PublishedDate = b.PublishedDate,
-            CoverImageUrl = _bookItems.FirstOrDefault(bi => bi.Book.Id == b.Id)?.CoverImageUrl,
+            CoverImageUrl = _bookCopies.FirstOrDefault(bi => bi.Book.Id == b.Id)?.CoverImageUrl,
             AuthorName = _authors.FirstOrDefault(a => a.Books.Any(bk => bk.Id == b.Id))?.Name,
             AuthorProfileImageUrl = _authors.FirstOrDefault(a => a.Books.Any(bk => bk.Id == b.Id))?.ProfileImageUrl,
-            TotalCopies = _bookItems.Count(bi => bi.Book.Id == b.Id),
-            AvailableCopies = _bookItems.Count(bi => bi.Book.Id == b.Id && bi.PulloutDate == null)
+            TotalCopies = _bookCopies.Count(bi => bi.Book.Id == b.Id),
+            AvailableCopies = _bookCopies.Count(bi => bi.Book.Id == b.Id && bi.PulloutDate == null)
         });
+    }
+
+    public EditBookViewModel GetBookById(Guid id)
+    {
+        var bookViewModel = GetBooks().FirstOrDefault(b => b.BookId == id) ?? throw new KeyNotFoundException("Book not found");
+        var editBookViewModel = new EditBookViewModel
+        {
+            BookId = bookViewModel.BookId,
+            Title = bookViewModel.Title,
+            ISBN = bookViewModel.ISBN,
+            Description = bookViewModel.Description,
+            Genre = bookViewModel.Genre,
+            PublishedDate = bookViewModel.PublishedDate,
+            AuthorId = _authors.FirstOrDefault(a => a.Name == bookViewModel.AuthorName)?.Id,
+            Author = bookViewModel.AuthorName,
+            AuthorProfileImageUrl = bookViewModel.AuthorProfileImageUrl
+        };
+
+        return editBookViewModel ?? throw new KeyNotFoundException("Book not found");
+    }
+
+    internal void UpdateBook(EditBookViewModel vm)
+    {
+        ArgumentNullException.ThrowIfNull(vm, nameof(vm));
+
+        var book = _books.FirstOrDefault(b => b.Id == vm.BookId) ?? throw new KeyNotFoundException("Book not found");
+        book.Title = vm.Title;
+        book.ISBN = vm.ISBN;
+        book.Description = vm.Description;
+        book.Genre = vm.Genre;
+        book.PublishedDate = vm.PublishedDate;
+
+        var author = _authors.FirstOrDefault(a => a.Id == vm.AuthorId);
+        if (author == null)
+        {
+            author = new Author
+            {
+                Id = Guid.NewGuid(),
+                Name = vm.Author,
+                ProfileImageUrl = vm.AuthorProfileImageUrl
+            };
+            _authors.Add(author);
+        }
+        else
+        {
+            author.Name = vm.Author;
+            author.ProfileImageUrl = vm.AuthorProfileImageUrl;
+        }
     }
 
     // Singleton pattern
