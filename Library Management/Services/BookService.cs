@@ -259,6 +259,7 @@ public class BookService
             ISBN = b.ISBN,
             Description = b.Description,
             Genre = b.Genre,
+            
             PublishedDate = b.PublishedDate,
             CoverImageUrl = _bookCopies.FirstOrDefault(bi => bi.Book.Id == b.Id)?.CoverImageUrl,
             AuthorName = _authors.FirstOrDefault(a => a.Books.Any(bk => bk.Id == b.Id))?.Name,
@@ -281,7 +282,8 @@ public class BookService
             PublishedDate = bookViewModel.PublishedDate,
             AuthorId = _authors.FirstOrDefault(a => a.Name == bookViewModel.AuthorName)?.Id,
             Author = bookViewModel.AuthorName,
-            AuthorProfileImageUrl = bookViewModel.AuthorProfileImageUrl
+            AuthorProfileImageUrl = bookViewModel.AuthorProfileImageUrl,
+            CoverImageUrl = bookViewModel.CoverImageUrl,
         };
 
         return editBookViewModel ?? throw new KeyNotFoundException("Book not found");
@@ -297,6 +299,7 @@ public class BookService
         book.Description = vm.Description;
         book.Genre = vm.Genre;
         book.PublishedDate = vm.PublishedDate;
+        
 
         var author = _authors.FirstOrDefault(a => a.Id == vm.AuthorId);
         if (author == null)
@@ -313,6 +316,43 @@ public class BookService
         {
             author.Name = vm.Author;
             author.ProfileImageUrl = vm.AuthorProfileImageUrl;
+        }
+
+        var bookCopy = _bookCopies.FirstOrDefault(bi => bi.Book.Id == vm.BookId);
+        if (bookCopy != null)
+        {
+            bookCopy.CoverImageUrl = vm.CoverImageUrl;
+        }
+        else
+        {
+            bookCopy = new BookCopy
+            {
+                Id = Guid.NewGuid(),
+                CoverImageUrl = vm.CoverImageUrl,
+                AddedDate = DateTime.Now,
+                Book = book
+            };
+            _bookCopies.Add(bookCopy);
+        }
+    }
+
+    public void DeleteBook(Guid id)
+    {
+        var book = _books.FirstOrDefault(b => b.Id == id) ?? throw new KeyNotFoundException("Book not found");
+        _books.Remove(book);
+        var author = _authors.FirstOrDefault(a => a.Books.Any(bk => bk.Id == id));
+        if (author != null)
+        {
+            author.Books.Remove(book);
+            if (!author.Books.Any())
+            {
+                _authors.Remove(author);
+            }
+        }
+        var bookCopies = _bookCopies.Where(bi => bi.Book.Id == id).ToList();
+        foreach (var bookCopy in bookCopies)
+        {
+            _bookCopies.Remove(bookCopy);
         }
     }
 

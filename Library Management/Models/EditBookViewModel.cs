@@ -9,11 +9,11 @@ namespace Library_Management.Models
         public Guid? BookCopyId { get; set; }
 
         [Required(ErrorMessage = "Book title is required.")]
-        [Display(Name ="Book Title")]
+        [Display(Name ="Book Title asodmflasdfmladsfj")]
         public string? Title { get; set; }
 
         [Required(ErrorMessage = "ISBN is required.")]
-        [Display(Name ="ISBN")]
+        [Display(Name ="ABSCBN")]
         public string? ISBN { get; set; }
 
         public string? Description { get; set; }
@@ -34,5 +34,7 @@ namespace Library_Management.Models
 
         [Display(Name = "Author Profile Image URL")]
         public string? AuthorProfileImageUrl { get; set; }
+        [Display(Name = "Cover Image URL")]
+        public string? CoverImageUrl { get; set; }
     }
 }

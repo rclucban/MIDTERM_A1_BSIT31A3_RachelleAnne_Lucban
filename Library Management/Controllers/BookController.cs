@@ -41,6 +41,20 @@ namespace Library_Management.Controllers
             return Ok();
         }
 
+        public IActionResult DeleteModal(Guid id)
+        {
+            
+            return PartialView("_DeletePartial");
+        }
+
+        [HttpDelete]
+        public IActionResult Delete(Guid id)
+        {
+            // Assuming BookService has a method to delete the book
+            BookService.Instance.DeleteBook(id);
+            return Ok();
+        }
+
         public IActionResult Details(Guid id)
         {
             var book = BookService.Instance.GetBooks().First(b => b.BookId == id);
