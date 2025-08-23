@@ -52,11 +52,38 @@
 </div>
 
 <div class="modal-footer">
-
     <a asp-action="Index" asp-route-id="@Model.BookId" class="btn btn-outline-primary">
         <i class="bi bi-arrow-left"></i> Close
     </a>
+    <button type="button" class="btn btn-success" onclick="openAddBookCopyModal('@Model.BookId')">
+        <i class="bi bi-plus-circle"></i> Add Copy
+    </button>
     <a asp-action="Edit" asp-route-id="@Model.BookId" class="btn btn-primary">
-        <i class="bi bi-pencil-square"></i> Manage Copies
+        <i class="bi bi-pencil-square"></i> Edit Book
     </a>
 </div>
+
+<!-- Add Book Copy Modal -->
+<div class="modal fade" id="addBookCopyModal" tabindex="-1" aria-labelledby="addBookCopyModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" id="addBookCopyModalContent">
+            <!-- Modal content will be loaded here -->
+        </div>
+    </div>
+</div>
+
+<script>
+function openAddBookCopyModal(bookId) {
+    fetch(`/Book/AddBookCopyModal/${bookId}`)
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById('addBookCopyModalContent').innerHTML = html;
+            const modal = new bootstrap.Modal(document.getElementById('addBookCopyModal'));
+            modal.show();
+        })
+        .catch(error => {
+            console.error('Error loading modal:', error);
+            alert('Error loading the add copy form. Please try again.');
+        });
+}
+</script>

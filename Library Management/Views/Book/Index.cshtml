@@ -8,7 +8,7 @@
 
 <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-4">
     <div class="col">
-        <a asp-action="Create" class="card h-100 shadow-sm border-0 d-flex align-items-center justify-content-center text-decoration-none add-card">
+        <a asp-action="Add" class="card h-100 shadow-sm border-0 d-flex align-items-center justify-content-center text-decoration-none add-card">
             <div class="text-center">
                 <i class="bi bi-plus-circle" style="font-size: 3rem; color: #6c757d;"></i>
                 <p class="mt-2 text-muted">Add Book</p>
@@ -30,7 +30,10 @@
                     </a>
                     <a asp-action="Details" asp-route-id="@book.BookId" class="action-btn" title="Details"/>
 
-                    <a asp-action="Delete" asp-route-id="@book.BookId" class="action-btn" title="Delete">
+                    <a href="javascript:void(0);" 
+                       class="action-btn" 
+                       title="Delete"
+                       onclick="openDeleteModal('@book.BookId', '@book.Title')">
                         <i class="bi bi-trash"></i>
                     </a>
                 </div>
@@ -92,19 +95,24 @@
                 });
         }
 
-        function openDeleteModal(url, title) {
-            $.ajax({
-                url: url,
-                type: 'GET',
-                success: function (data) {
-                    $('#exampleModal .modal-content').html(data);
-                    $('#exampleModalLabel').text(title);
-                    $('#exampleModal').modal('show');
-                },
-                error: function () {
-                    alert('Error loading details.');
-                }
-            });
+        function openDeleteModal(bookId, bookTitle) {
+            if (confirm(`Are you sure you want to delete "${bookTitle}" and all its copies? This action cannot be undone.`)) {
+                fetch(`/Book/Delete/${bookId}`, {
+                    method: 'DELETE'
+                })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Book deleted successfully!');
+                        location.reload();
+                    } else {
+                        alert('Error deleting book. Please try again.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred. Please try again.');
+                });
+            }
         }
 
         document.addEventListener("submit", function (e) {

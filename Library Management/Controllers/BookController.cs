@@ -16,6 +16,18 @@ namespace Library_Management.Controllers
             return View();
         }
 
+        [HttpPost]
+        public IActionResult Add(AddBookViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            BookService.Instance.AddBook(model);
+            return RedirectToAction("Index");
+        }
+
      
         public IActionResult EditModal(Guid id)
         {
@@ -43,8 +55,8 @@ namespace Library_Management.Controllers
 
         public IActionResult DeleteModal(Guid id)
         {
-            
-            return PartialView("_DeletePartial");
+            ViewBag.BookId = id;
+            return PartialView("_DeleteBookPartial");
         }
 
         [HttpDelete]
@@ -59,6 +71,32 @@ namespace Library_Management.Controllers
         {
             var book = BookService.Instance.GetBooks().First(b => b.BookId == id);
             return View(book);
+        }
+
+        public IActionResult AddBookCopyModal(Guid id)
+        {
+            var book = BookService.Instance.GetBooks().FirstOrDefault(b => b.BookId == id);
+            if (book == null) return NotFound();
+
+            var viewModel = new AddBookCopyViewModel
+            {
+                BookId = id,
+                BookTitle = book.Title
+            };
+
+            return PartialView("_AddBookCopyPartial", viewModel);
+        }
+
+        [HttpPost]
+        public IActionResult AddBookCopy(AddBookCopyViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            BookService.Instance.AddBookCopy(model.BookId, model.CoverImageUrl!, model.Condition!, model.Source!);
+            return Ok();
         }
 
 

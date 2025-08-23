@@ -356,6 +356,23 @@ public class BookService
         }
     }
 
+    public void AddBookCopy(Guid bookId, string coverImageUrl, string condition, string source)
+    {
+        var book = _books.FirstOrDefault(b => b.Id == bookId) ?? throw new KeyNotFoundException("Book not found");
+        
+        var newBookCopy = new BookCopy
+        {
+            Id = Guid.NewGuid(),
+            CoverImageUrl = coverImageUrl,
+            Condition = condition,
+            Source = source,
+            AddedDate = DateTime.Now,
+            Book = book
+        };
+        
+        _bookCopies.Add(newBookCopy);
+    }
+
     // Singleton pattern
     private static BookService? _instance;
     public static BookService Instance
